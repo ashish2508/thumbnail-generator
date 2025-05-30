@@ -1,39 +1,38 @@
 "use server";
 
-import "~/styles/globals.css";
-
-import { getServerSession } from "next-auth";
 import Link from "next/link";
-import Signout from "~/components/signout";
-import { Button } from "~/components/ui/button";
-import { authOptions } from "~/server/auth";
-import { db } from "~/server/db";
+import { IoMdArrowBack } from "react-icons/io";
+import PricingCard from "~/components/pricing-card";
+import { env } from "~/env";
 
-export default async function Layout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
-  const serverSession = await getServerSession(authOptions);
-  const user = await db.user.findUnique({
-    where: {
-      id: serverSession?.user.id,
-    },
-    select: {
-      credits: true,
-    },
-  });
-
+const Page = async () => {
   return (
-    <div className="flex h-screen w-full flex-col items-center overflow-y-scroll px-6 py-6">
-      <nav className="flex w-full items-center justify-end pb-6">
-        <div className="flex items-center gap-4">
-          <p>{user?.credits} credits left</p>
-          <Link href="/dashboard/pricing">
-            <Button>Buy more</Button>
-          </Link>
-          <Signout />
+    <div className="flex w-full items-center justify-center md:h-full">
+      <div className="flex flex-col gap-4">
+        <Link className="flex items-center gap-2" href="/dashboard">
+          <IoMdArrowBack className="h-4 w-4" />
+          <p className="leading-7">Go back</p>
+        </Link>
+        <div className="flex flex-col gap-4 md:flex-row">
+          <PricingCard
+            priceId={env.STRIPE_10_PACK}
+            pricing="$10"
+            credits="10"
+          />
+          <PricingCard
+            priceId={env.STRIPE_25_PACK}
+            pricing="$20"
+            credits="25"
+          />
+          <PricingCard
+            priceId={env.STRIPE_100_PACK}
+            pricing="$50"
+            credits="100"
+          />
         </div>
-      </nav>
-      {children}
+      </div>
     </div>
   );
-}
+};
+
+export default Page;
