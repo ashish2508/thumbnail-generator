@@ -30,3 +30,5 @@ npm run dev
 ### Access the Application
 Open your browser and visit:
 [http://localhost:3000](http://localhost:3000)
+
+[WEBSITE](https://ai-thumbnail-gena8.vercel.app/)
