@@ -1,7 +1,6 @@
-import { PrismaClient } from './prisma/generated/client'
 import bcrypt from 'bcrypt' 
 const prisma = new PrismaClient()
-
+import { PrismaClient } from '@prisma/client'
 async function main() {
   console.log('🌱 Starting database seed...')
 
