@@ -2,7 +2,7 @@
 Follow these steps to install and set up the project.
 ### Clone the Repository
 ```bash
-git clone https://github.com/ashish2508/thumbnail-generator.git
+git clone https://github.com/ashish2508/thumbnail-generator.git thumbnails
 ```
 
 ### Navigate to the Project Directory
