@@ -1,5 +1,3 @@
-import { IoIosAdd } from "react-icons/io";
-
 const Dropzone = ({
   setSelectedImage,
 }: {

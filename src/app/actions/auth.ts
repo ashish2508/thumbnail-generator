@@ -1,11 +1,11 @@
 "use server";
 
-import { signInSchema } from "~/schemas/auth";
-import { db } from "~/server/db";
 import bcrypt from "bcryptjs";
 import { redirect } from "next/navigation";
-import { env } from "~/env";
 import Stripe from "stripe";
+import { env } from "~/env";
+import { signInSchema } from "~/schemas/auth";
+import { db } from "~/server/db";
 
 export const signup = async (email: string, password: string) => {
   // Validation
