@@ -1,14 +1,11 @@
 "use client";
 
-import { removeBackground } from "@imgly/background-removal";
 import { useEffect, useRef, useState } from "react";
-import { IoMdArrowBack } from "react-icons/io";
-import { getPresignedUrl } from "~/app/actions/aws";
-import { generate, refresh } from "~/app/actions/generate";
-import { domine, inter } from "../app/fonts";
 import Dropzone from "./dropzone";
 import Style from "./style";
+import { removeBackground } from "@imgly/background-removal";
 import { Button } from "./ui/button";
+import { IoMdArrowBack } from "react-icons/io";
 import {
   Card,
   CardContent,
@@ -16,8 +13,8 @@ import {
   CardHeader,
   CardTitle,
 } from "./ui/card";
-import { Input } from "./ui/input";
 import { Label } from "./ui/label";
+import { Input } from "./ui/input";
 import {
   Select,
   SelectContent,
@@ -25,6 +22,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
+import { inter, domine } from "../app/fonts";
+import { getPresignedUrl } from "~/app/actions/aws";
+import { generate, refresh } from "~/app/actions/generate";
 
 const presets = {
   style1: {

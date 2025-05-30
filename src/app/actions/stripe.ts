@@ -2,10 +2,10 @@
 
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import Stripe from "stripe";
 import { env } from "~/env";
 import { authOptions } from "~/server/auth";
 import { db } from "~/server/db";
+import Stripe from "stripe";
 
 export const redirectToBillingSession = async (priceId: string) => {
   if (
@@ -24,7 +24,7 @@ export const redirectToBillingSession = async (priceId: string) => {
     },
     select: {
       stripeCustomerId: true,
-    }, 
+    },
   });
 
   if (!user?.stripeCustomerId) {

@@ -31,7 +31,7 @@ export default async function HomePage() {
         <div className="flex flex-col gap-1 md:flex-row md:items-center md:gap-10">
           <div className="flex max-w-2xl flex-col gap-1 md:w-1/2">
             <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
-              Easier thumbnails <br /> for creators
+              Easier thumnails <br /> for creators
             </h1>
             <p className="mt-4 text-lg text-muted-foreground">
               Thumbnails with text behind the foreground are popular, but takes

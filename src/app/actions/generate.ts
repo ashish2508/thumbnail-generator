@@ -20,5 +20,5 @@ export const generate = async () => {
 };
 
 export const refresh = async () => {
-  revalidatePath("/dashboard");
-};
+    revalidatePath("/dashboard");
+}
