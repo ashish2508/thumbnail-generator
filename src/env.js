@@ -4,14 +4,12 @@ import { z } from "zod";
 export const env = createEnv({
   server: {
     NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
-    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string(),
     CLERK_SECRET_KEY: z.string(),
     BASE_URL: z.string().url(),
     MY_AWS_ACCESS_KEY: z.string(),
     MY_AWS_SECRET_KEY: z.string(),
     MY_AWS_REGION: z.string(),
     MY_AWS_BUCKET_NAME: z.string(),
-    STRIPE_PUBLISHABLE_KEY: z.string(),
     STRIPE_SECRET_KEY: z.string(),
     STRIPE_WEBHOOK_SECRET: z.string(),
     STRIPE_10_PACK: z.string(),
@@ -21,6 +19,7 @@ export const env = createEnv({
 
   client: {
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string(),
+    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().optional(),
   },
 
   runtimeEnv: {
@@ -32,7 +31,7 @@ export const env = createEnv({
     MY_AWS_SECRET_KEY: process.env.MY_AWS_SECRET_KEY,
     MY_AWS_REGION: process.env.MY_AWS_REGION,
     MY_AWS_BUCKET_NAME: process.env.MY_AWS_BUCKET_NAME,
-    STRIPE_PUBLISHABLE_KEY: process.env.STRIPE_PUBLISHABLE_KEY,
+    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
     STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
     STRIPE_10_PACK: process.env.STRIPE_10_PACK,

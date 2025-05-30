@@ -2,7 +2,7 @@
 
 import "~/styles/globals.css";
 
-import { getAuth } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 import Signout from "~/components/signout";
 import { Button } from "~/components/ui/button";
@@ -11,7 +11,7 @@ import { db } from "~/server/db";
 export default async function Layout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const { userId } = getAuth();
+  const { userId } = await auth();
 
   const user = userId
     ? await db.user.findUnique({

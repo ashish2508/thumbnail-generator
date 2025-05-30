@@ -1,18 +1,11 @@
-"use server";
+import { SignIn } from '@clerk/nextjs';
 
-import { getAuth } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
-import Signin from "~/components/ui/signin";
-
-const Page = async () => {
-  const { userId } = getAuth();
-
-  if (userId) {
-    redirect("/dashboard");
-  }
-
-  return <Signin />;
+const Page = () => {
+  return (
+    <div className="flex justify-center items-center min-h-[calc(100vh-64px)]">
+      <SignIn routing="path" path="/signin" afterSignInUrl="/dashboard" />
+    </div>
+  );
 };
 
 export default Page;
-

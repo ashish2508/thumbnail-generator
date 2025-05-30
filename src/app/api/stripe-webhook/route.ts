@@ -7,14 +7,15 @@ const stripe = new Stripe(env.STRIPE_SECRET_KEY);
 
 export async function POST(req: Request) {
   const body = await req.text();
-  const sig = headers().get("Stripe-Signature");
+  const headersList = await headers();
+  const sig = headersList.get("Stripe-Signature");
   const webhookSecret = env.STRIPE_WEBHOOK_SECRET;
   let event: Stripe.Event;
 
   try {
     if (!sig || !webhookSecret) return;
     event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
-  } catch (err) {
+  } catch {
     return new Response(`Webhook Error`, { status: 400 });
   }
 
@@ -32,11 +33,9 @@ export async function POST(req: Request) {
       if (lineItems && lineItems.data.length > 0) {
         const priceId = lineItems.data[0]?.price?.id ?? undefined;
 
-        // Update user credits based on the priceId
         if (priceId) {
           let creditsToAdd = 0;
 
-          // Determine credits to add
           switch (priceId) {
             case env.STRIPE_10_PACK:
               creditsToAdd = 10;
@@ -62,5 +61,6 @@ export async function POST(req: Request) {
       console.warn("Unhandled event type: " + event.type);
   }
 
-  return new Response(JSON.stringify({ recieved: true }));
+  return new Response(JSON.stringify({ received: true }));
 }
+

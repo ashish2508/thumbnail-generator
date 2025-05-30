@@ -1,0 +1,2693 @@
+/** @type {import("eslint").Linter.Config} */
+const config = {
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": true
+  },
+  "plugins": [
+    "@typescript-eslint"
+  ],
+  "extends": [
+    "next/core-web-vitals",
+    "plugin:@typescript-eslint/recommended-type-checked",
+    "plugin:@typescript-eslint/stylistic-type-checked"
+  ],
+  "rules": {
+    "@typescript-eslint/array-type": "off",
+    "@typescript-eslint/consistent-type-definitions": "off",
+    "@typescript-eslint/consistent-type-imports": [
+      "warn",
+      {
+        "prefer": "type-imports",
+        "fixStyle": "inline-type-imports"
+      }
+    ],
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^_"
+      }
+    ],
+    "@typescript-eslint/require-await": "off",
+    "@typescript-eslint/no-misused-promises": [
+      "error",
+      {
+        "checksVoidReturn": {
+          "attributes": false
+        }
+      }
+    ]
+  }
+}
+module.exports = config;/// <reference types="next" />
+/// <reference types="next/image-types/global" />
+
+// NOTE: This file should not be edited
+// see https://nextjs.org/docs/app/api-reference/config/typescript for more information.
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem}
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%}
+}
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+"use server";
+
+import Link from 'next/link';
+import Image from 'next/image';
+import { PricingCard } from '~/components/pricing-card';
+import { headers } from "next/headers";
+import { getAuth } from "@clerk/nextjs/server";
+import { Button } from "~/components/ui/button";
+import { env } from "~/env";
+
+export default async function HomePage() {
+  const headersList = headers();
+  const { userId } = getAuth({ headers: headersList });
+  const isSignedIn = !!userId;
+
+  return (
+    <div className="flex h-screen flex-col items-center overflow-y-scroll px-6 py-6">
+      <div className="mt-2 flex flex-col gap-20 md:mt-14">
+        <div className="flex flex-col gap-1 md:flex-row md:items-center md:gap-10">
+          <div className="flex max-w-2xl flex-col gap-1 md:w-1/2">
+            <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
+              Easier thumbnails <br /> for creators
+            </h1>
+            <p className="mt-4 text-lg text-muted-foreground">
+              Thumbnails with text behind the foreground are popular, but takes
+              time to make manually. Generate them automatically with this tool.
+            </p>
+            {isSignedIn ? (
+              <Button className="mt-6 w-full md:w-fit">
+                <Link href="/dashboard">Go to dashboard</Link>
+              </Button>
+            ) : (
+              <Button className="mt-6 w-full md:w-fit">
+                <Link href="/signup">Get a Free Thumbnail</Link>
+              </Button>
+            )}
+          </div>
+          <Image
+            className="mt-6 max-w-full rounded-lg shadow-md md:w-1/2 md:max-w-xl"
+            src="/demo.png"
+            width={800}
+            height={800}
+            loading="eager"
+            alt={"Demo"}
+          />
+        </div>
+        <div className="flex flex-col items-center gap-6">
+          <h2 className="scroll-m-20 text-xl font-extrabold tracking-tight lg:text-3xl">
+            Pricing
+          </h2>
+          <div className="flex flex-col gap-4 md:flex-row">
+            <PricingCard pricing="$2" credits="10" priceId={env.STRIPE_10_PACK} />
+            <PricingCard pricing="$5" credits="25" priceId={env.STRIPE_25_PACK} />
+            <PricingCard pricing="$10" credits="100" priceId={env.STRIPE_100_PACK} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+"use server";
+
+import { getAuth } from "@clerk/nextjs/server";
+import Link from "next/link";
+import Recent from "~/components/recent";
+import ThumbnailCreator from "~/components/thumbnail-creator";
+import { Button } from "~/components/ui/button";
+import { db } from "~/server/db";
+
+const Page = async () => {
+  const { userId } = getAuth();
+
+  if (!userId) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+      <p>Please sign in to access this page.</p>
+        <Link href="/signin">
+          <Button>Sign In</Button>
+        </Link>
+      </div>
+    );
+  }
+
+  const user = await db.user.findUnique({
+    where: { id: userId },
+    select: { credits: true },
+  });
+
+  return (
+    <div className="flex h-screen max-w-full items-center justify-center px-4 md:max-w-3xl md:px-0">
+      <div className="flex max-w-full flex-col gap-10">
+        {user?.credits === 0 ? (
+          <div className="flex flex-col px-10 md:mt-10">
+            <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
+              Hi there
+            </h1>
+            <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
+              Want to create a thumbnail?
+            </h1>
+            <div className="mt-2 flex flex-col gap-3">
+              <p className="leading-7 text-muted-foreground">
+                Buy more credits to continue generating thumbnails.
+              </p>
+              <Link href="/dashboard/pricing">
+                <Button>Buy credits</Button>
+              </Link>
+            </div>
+            <div className="mt-8">
+              <Recent />
+            </div>
+          </div>
+        ) : (
+          <ThumbnailCreator>
+            <Recent />
+          </ThumbnailCreator>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default Page;
+
+"use server";
+
+import Link from "next/link";
+import { IoMdArrowBack } from "react-icons/io";
+import PricingCard from "~/components/pricing-card";
+import { env } from "~/env";
+
+const Page = async () => {
+  return (
+    <div className="flex w-full items-center justify-center md:h-full">
+      <div className="flex flex-col gap-4">
+        <Link className="flex items-center gap-2" href="/dashboard">
+          <IoMdArrowBack className="h-4 w-4" />
+          <p className="leading-7">Go back</p>
+        </Link>
+        <div className="flex flex-col gap-4 md:flex-row">
+          <PricingCard
+            priceId={env.STRIPE_10_PACK}
+            pricing="$10"
+            credits="10"
+          />
+          <PricingCard
+            priceId={env.STRIPE_25_PACK}
+            pricing="$20"
+            credits="25"
+          />
+          <PricingCard
+            priceId={env.STRIPE_100_PACK}
+            pricing="$50"
+            credits="100"
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Page;
+"use server";
+
+import "~/styles/globals.css";
+
+import { getAuth } from "@clerk/nextjs/server";
+import Link from "next/link";
+import Signout from "~/components/signout";
+import { Button } from "~/components/ui/button";
+import { db } from "~/server/db";
+
+export default async function Layout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
+  const { userId } = getAuth();
+
+  const user = userId
+    ? await db.user.findUnique({
+        where: { id: userId },
+        select: { credits: true },
+      })
+    : null;
+
+  return (
+    <div className="flex h-screen w-full flex-col items-center overflow-y-scroll px-6 py-6">
+      <nav className="flex w-full items-center justify-end pb-6">
+        <div className="flex items-center gap-4">
+          <p>{user?.credits ?? 0} credits left</p>
+          <Link href="/dashboard/pricing">
+            <Button>Buy more</Button>
+          </Link>
+          <Signout />
+        </div>
+      </nav>
+      {children}
+    </div>
+  );
+}
+
+import { SignIn } from '@clerk/nextjs';
+
+const Page = () => {
+  return (
+    <div className="flex justify-center items-center min-h-[calc(100vh-64px)]">
+      <SignIn routing="path" path="/signin" afterSignInUrl="/dashboard" />
+    </div>
+  );
+};
+
+export default Page;
+// src/app/page.tsx
+
+import Link from 'next/link';
+import Image from 'next/image';
+import { PricingCard } from '@/components/pricing-card'; // Assuming you have this component
+
+export default function HomePage() {
+  return (
+    <div className="min-h-screen bg-white">
+ 
+      <main className="container mx-auto py-16 px-4">
+        <div className="flex flex-col md:flex-row items-center justify-between">
+          <div className="md:w-1/2 pr-8">
+            <h1 className="text-5xl font-bold mb-4">
+              Easier thumbnails <br /> for creators
+            </h1>
+            <p className="text-lg text-gray-700 mb-8">
+              Thumbnails with text behind the foreground are popular, but takes time to make manually. Generate them automatically with this tool.
+            </p>
+            {/* This is your main Call To Action for new users. */}
+            {/* Consider where this button should lead: to the dashboard if signed in, or to a signup/signin page if not.
+                For now, linking to /dashboard is reasonable if that's the next step after getting a thumbnail.
+            */}
+            <Link href="/dashboard"> {/* Assuming /dashboard is where thumbnail creation happens */}
+              <button className="bg-black text-white px-6 py-3 rounded-md text-lg hover:bg-gray-800 transition-colors">
+                Get a Free Thumbnail
+              </button>
+            </Link>
+          </div>
+          <div className="md:w-1/2 mt-8 md:mt-0">
+            <Image
+              src="/demo.png" // Ensure this path is correct
+              alt="Person wearing sunglasses"
+              width={500}
+              height={300}
+              className="rounded-lg shadow-lg"
+            />
+          </div>
+        </div>
+
+        <section className="mt-24 text-center">
+          <h2 className="text-3xl font-bold mb-12">Pricing</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Your pricing cards should be rendered here */}
+            <PricingCard
+              price="$2"
+              type="one-time"
+              credits={10}
+              description="A pack of 10 credits"
+              features={["10 credits", "1 credits = 1 thumbnail"]}
+            />
+            <PricingCard
+              price="$5"
+              type="one-time"
+              credits={25}
+              description="A pack of 25 credits"
+              features={["25 credits", "1 credits = 1 thumbnail"]}
+            />
+            <PricingCard
+              price="$10"
+              type="one-time"
+              credits={100}
+              description="A pack of 100 credits"
+              features={["100 credits", "1 credits = 1 thumbnail"]}
+            />
+          </div>
+        </section>
+      </main>
+
+      <footer className="absolute bottom-4 left-4">
+        <div className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center font-bold">N</div>
+      </footer>
+    </div>
+  );
+}
+import { auth } from "@clerk/nextjs";
+import { revalidatePath } from "next/cache";
+import { NextResponse } from "next/server";
+import { env } from "~/env";
+
+export async function GET() {
+  const { userId } = auth();
+
+  if (!userId) {
+    return NextResponse.redirect(new URL('/sign-in', env.BASE_URL));
+  }
+
+  revalidatePath('/dashboard');
+
+  return NextResponse.redirect(new URL('/dashboard', env.BASE_URL));
+}
+import { headers } from "next/headers";
+import Stripe from "stripe";
+import { env } from "~/env";
+import { db } from "~/server/db";
+
+const stripe = new Stripe(env.STRIPE_SECRET_KEY);
+
+export async function POST(req: Request) {
+  const body = await req.text();
+  const sig = headers().get("Stripe-Signature");
+  const webhookSecret = env.STRIPE_WEBHOOK_SECRET;
+  let event: Stripe.Event;
+
+  try {
+    if (!sig || !webhookSecret) return;
+    event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
+  } catch (err) {
+    return new Response(`Webhook Error`, { status: 400 });
+  }
+
+  switch (event.type) {
+    case "checkout.session.completed":
+      const session = event.data.object;
+      const customerId = session.customer as string;
+
+      const retrivedSession = await stripe.checkout.sessions.retrieve(
+        session.id,
+        { expand: ["line_items"] },
+      );
+
+      const lineItems = retrivedSession.line_items;
+      if (lineItems && lineItems.data.length > 0) {
+        const priceId = lineItems.data[0]?.price?.id ?? undefined;
+
+        // Update user credits based on the priceId
+        if (priceId) {
+          let creditsToAdd = 0;
+
+          // Determine credits to add
+          switch (priceId) {
+            case env.STRIPE_10_PACK:
+              creditsToAdd = 10;
+              break;
+            case env.STRIPE_25_PACK:
+              creditsToAdd = 25;
+              break;
+            case env.STRIPE_100_PACK:
+              creditsToAdd = 100;
+              break;
+          }
+
+          if (creditsToAdd > 0) {
+            await db.user.update({
+              where: { stripeCustomerId: customerId },
+              data: { credits: { increment: creditsToAdd } },
+            });
+          }
+        }
+      }
+      break;
+    default:
+      console.warn("Unhandled event type: " + event.type);
+  }
+
+  return new Response(JSON.stringify({ recieved: true }));
+}
+import { NextRequest, NextResponse } from "next/server"
+import jwt from "jsonwebtoken"
+import bcrypt from "bcrypt"
+
+const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key"
+
+const users = [
+  {
+    id: "1",
+    email: "user@example.com",
+    passwordHash: "$2b$10$CwTycUXWue0Thq9StjUM0uJ8zLzXtT45JHC1e0kCshjIVw6QKZ8uK", // bcrypt hash for "password123"
+  },
+]
+
+export async function POST(request: NextRequest) {
+  const { email, password } = await request.json()
+
+  if (!email || !password) {
+    return NextResponse.json({ error: "Missing email or password" }, { status: 400 })
+  }
+
+  const user = users.find((u) => u.email === email)
+
+  if (!user) {
+    return NextResponse.json({ error: "Invalid email or password" }, { status: 401 })
+  }
+
+  const passwordValid = await bcrypt.compare(password, user.passwordHash)
+
+  if (!passwordValid) {
+    return NextResponse.json({ error: "Invalid email or password" }, { status: 401 })
+  }
+
+  const token = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET, {
+    expiresIn: "1h",
+  })
+
+  return NextResponse.json({ token })
+}
+
+"use client";
+
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Button } from "~/components/ui/button";
+
+function NotFoundPage() {
+  const router = useRouter();
+
+  return (
+    <div className="flex h-screen w-full items-center justify-center px-10 py-10">
+      <div className="flex flex-col items-center gap-4">
+        <h1>The page you&apos;re looking for doesn&apos;t exist.</h1>
+        <Link href="/dashboard">
+          <Button onClick={() => router.back()}>Go back</Button>
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+export default NotFoundPage;
+import { Inter, Domine } from "next/font/google";
+
+export const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+});
+
+export const domine = Domine({
+  subsets: ["latin"],
+  display: "swap",
+});
+"use server";
+
+import { redirect } from "next/navigation";
+import { env } from "~/env";
+import { db } from "~/server/db";
+import Stripe from "stripe";
+import { getAuth } from "@clerk/nextjs/server";
+
+export const redirectToBillingSession = async (priceId: string) => {
+  if (![env.STRIPE_10_PACK, env.STRIPE_25_PACK, env.STRIPE_100_PACK].includes(priceId)) {
+    throw new Error("Invalid priceId");
+  }
+
+  const { userId } = getAuth();
+
+  if (!userId) throw new Error("Not authenticated");
+
+  const user = await db.user.findUnique({
+    where: { id: userId },
+    select: { stripeCustomerId: true },
+  });
+
+  if (!user?.stripeCustomerId) {
+    throw new Error("User has no stripeCustomerId");
+  }
+
+  const stripe = new Stripe(env.STRIPE_SECRET_KEY);
+
+  const session = await stripe.checkout.sessions.create({
+    line_items: [{ price: priceId, quantity: 1 }],
+    customer: user.stripeCustomerId,
+    mode: "payment",
+    success_url: `${env.BASE_URL}/api/session-callback`,
+  });
+
+  if (!session.url) throw new Error("No session URL");
+
+  redirect(session.url);
+};
+
+"use server";
+
+import { signInSchema } from "~/schemas/auth";
+import { db } from "~/server/db";
+import bcrypt from "bcryptjs";
+import { redirect } from "next/navigation";
+import { env } from "~/env";
+import Stripe from "stripe";
+
+export const signup = async (email: string, password: string) => {
+  // Validation
+  const isValid = signInSchema.safeParse({ email, password });
+
+  if (isValid.error) {
+    return "Error";
+  }
+
+  // See if user exists
+  const user = await db.user.findUnique({
+    where: {
+      email: isValid.data.email,
+    },
+  });
+
+  if (user) {
+    return "User already exists";
+  }
+
+  // Encrypt password
+  const hash = await bcrypt.hash(isValid.data.password, 10);
+
+  // Create a stripe user
+  const stripe = new Stripe(env.STRIPE_SECRET_KEY);
+
+  const stripeCustomer = await stripe.customers.create({
+    email: isValid.data.email.toLowerCase(),
+  });
+
+  // Create the user
+  await db.user.create({
+    data: {
+      email: isValid.data.email,
+      password: hash,
+      stripeCustomerId: stripeCustomer.id,
+    },
+  });
+
+  // Redirect the user to signin, if is registered
+  redirect("/signin");
+};
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { db } from "~/server/db";
+import { getAuth } from "@clerk/nextjs/server";
+
+export const generate = async () => {
+  const { userId } = getAuth();
+
+  if (!userId) throw new Error("Not authenticated");
+
+  await db.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      credits: {
+        decrement: 1,
+      },
+    },
+  });
+};
+
+export const refresh = async () => {
+  revalidatePath("/dashboard");
+};
+
+"use server";
+
+import AWS from "aws-sdk";
+import { getAuth } from "@clerk/nextjs/server";
+import { env } from "~/env";
+import { format } from "date-fns";
+import { redirect } from "next/navigation";
+
+const s3 = new AWS.S3({
+  accessKeyId: env.MY_AWS_ACCESS_KEY,
+  secretAccessKey: env.MY_AWS_SECRET_KEY,
+  region: env.MY_AWS_REGION,
+});
+
+export const getPresignedUrl = async () => {
+  const { userId } = getAuth();
+
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
+
+  const timestamp = format(new Date(), "yyyyMMddHHmmss");
+  const key = `${userId}/${timestamp}.png`;
+
+  const params = {
+    Bucket: env.MY_AWS_BUCKET_NAME,
+    Key: key,
+    Expires: 60,
+    ContentType: "image/png",
+  };
+
+  const uploadUrl = s3.getSignedUrl("putObject", params);
+
+  return uploadUrl;
+};
+
+export const downloadS3File = async (url: string) => {
+  const { userId } = getAuth();
+
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
+
+  const key = url.replace(
+    `https://${env.MY_AWS_BUCKET_NAME}.s3.${env.MY_AWS_REGION}.amazonaws.com/`,
+    "",
+  );
+
+  const params = {
+    Bucket: env.MY_AWS_BUCKET_NAME,
+    Key: key,
+    Expires: 3600,
+    ResponseContentDisposition: 'attachment; filename="thumbnail.png"',
+  };
+
+  const downloadUrl = s3.getSignedUrl("getObject", params);
+
+  redirect(downloadUrl);
+};
+
+import { SignUp } from '@clerk/nextjs';
+
+const Page = () => {
+  return (
+    <div className="flex justify-center items-center min-h-[calc(100vh-64px)]">
+      <SignUp routing="path" path="/signup" afterSignUpUrl="/dashboard" />
+    </div>
+  );
+};
+
+export default Page;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem}
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%}
+}
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+import { clerkMiddleware } from '@clerk/nextjs/server';
+
+export default clerkMiddleware();
+
+export const config = {
+  matcher: [
+    // Skip Next.js internals and all static files, unless found in search params
+    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    // Always run for API routes
+    '/(api|trpc)(.*)',
+  ],
+};
+
+import { clsx, type ClassValue } from "clsx"
+import { twMerge } from "tailwind-merge"
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
+import { object, string } from "zod";
+
+export const signInSchema = object({
+  email: string({ required_error: "Email is required" })
+    .min(1, "Email is required")
+    .email("Invalid email"),
+  password: string({ required_error: "Password is required" })
+    .min(1, "Password is required")
+    .min(8, "Password must be at least 8 characters")
+    .max(32, "Password must be at most 32 characters"),
+});
+import { getAuth } from "@clerk/nextjs/server";
+
+export const getCurrentUser = () => {
+  const { userId } = getAuth();
+  if (!userId) return null;
+  return { id: userId };
+};
+
+import { PrismaClient } from "@prisma/client";
+
+import { env } from "~/env";
+
+const createPrismaClient = () =>
+  new PrismaClient({
+    log:
+      env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
+  });
+
+const globalForPrisma = globalThis as unknown as {
+  prisma: ReturnType<typeof createPrismaClient> | undefined;
+};
+
+export const db = globalForPrisma.prisma ?? createPrismaClient();
+
+if (env.NODE_ENV !== "production") globalForPrisma.prisma = db;
+import { createEnv } from "@t3-oss/env-nextjs";
+import { z } from "zod";
+
+export const env = createEnv({
+  server: {
+    NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string(),
+    CLERK_SECRET_KEY: z.string(),
+    BASE_URL: z.string().url(),
+    MY_AWS_ACCESS_KEY: z.string(),
+    MY_AWS_SECRET_KEY: z.string(),
+    MY_AWS_REGION: z.string(),
+    MY_AWS_BUCKET_NAME: z.string(),
+    STRIPE_PUBLISHABLE_KEY: z.string(),
+    STRIPE_SECRET_KEY: z.string(),
+    STRIPE_WEBHOOK_SECRET: z.string(),
+    STRIPE_10_PACK: z.string(),
+    STRIPE_25_PACK: z.string(),
+    STRIPE_100_PACK: z.string(),
+  },
+
+  client: {
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string(),
+  },
+
+  runtimeEnv: {
+    NODE_ENV: process.env.NODE_ENV,
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+    CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
+    BASE_URL: process.env.BASE_URL,
+    MY_AWS_ACCESS_KEY: process.env.MY_AWS_ACCESS_KEY,
+    MY_AWS_SECRET_KEY: process.env.MY_AWS_SECRET_KEY,
+    MY_AWS_REGION: process.env.MY_AWS_REGION,
+    MY_AWS_BUCKET_NAME: process.env.MY_AWS_BUCKET_NAME,
+    STRIPE_PUBLISHABLE_KEY: process.env.STRIPE_PUBLISHABLE_KEY,
+    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
+    STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
+    STRIPE_10_PACK: process.env.STRIPE_10_PACK,
+    STRIPE_25_PACK: process.env.STRIPE_25_PACK,
+    STRIPE_100_PACK: process.env.STRIPE_100_PACK,
+  },
+
+  skipValidation: !!process.env.SKIP_ENV_VALIDATION,
+
+  emptyStringAsUndefined: true,
+});
+
+// src/components/header.tsx
+'use client'; // This component needs to be a Client Component to use Clerk's Hooks and UI components
+
+import Link from 'next/link';
+import { UserButton, SignedIn, SignedOut } from '@clerk/nextjs'; // Import Clerk's UI components
+
+export function Header() {
+  return (
+    <header className="flex justify-between items-center p-4 bg-white border-b border-gray-200">
+      <Link href="/" className="text-xl font-bold text-black">
+        Thumbnails
+      </Link>
+      <nav className="flex items-center space-x-4">
+        {/* Render these if the user is NOT signed in */}
+        <SignedOut>
+          {/* Using Next.js Link to point to your dedicated signin/signup pages */}
+          <Link href="/signin" className="text-sm text-gray-700 hover:text-black">
+            Sign in
+          </Link>
+          <Link href="/signup" className="text-sm text-gray-700 hover:text-black">
+            Sign up
+          </Link>
+        </SignedOut>
+
+        {/* Render this if the user IS signed in */}
+        <SignedIn>
+          {/* Clerk's UserButton provides a dropdown for user management, including sign out */}
+          <UserButton afterSignOutUrl="/" />
+        </SignedIn>
+      </nav>
+    </header>
+  );
+}
+"use client";
+
+import { downloadS3File } from "~/app/actions/aws";
+import { Button } from "./ui/button";
+
+const DownloadRecentThumbnail = ({ url }: { url: string }) => {
+  return (
+    <Button
+      onClick={async () => await downloadS3File(url)}
+      className="w-full"
+      variant="outline"
+    >
+      Download
+    </Button>
+  );
+};
+
+export default DownloadRecentThumbnail;
+"use client";
+
+import { useClerk } from "@clerk/nextjs";
+import { PiSignOutLight } from "react-icons/pi";
+
+const Signout = () => {
+  const { signOut } = useClerk();
+
+  return (
+    <PiSignOutLight
+      onClick={() => signOut()}
+      className="h-6 w-6 cursor-pointer"
+    />
+  );
+};
+
+export default Signout;
+
+"use client";
+
+import { IoIosCheckmarkCircleOutline, IoMdArrowBack } from "react-icons/io";
+import { redirectToBillingSession } from "~/app/actions/stripe";
+import { Button } from "~/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "~/components/ui/card";
+
+const PricingCard = ({
+  pricing,
+  credits,
+  priceId,
+}: {
+  pricing: string;
+  credits: string;
+  priceId?: string;
+}) => {
+  return (
+    <Card className="h-fit w-60">
+      <CardHeader>
+        <CardTitle>
+          <div className="flex items-end gap-2">
+            <p>{pricing}</p>
+            <p className="text-sm font-normal">/ one-time</p>
+          </div>
+        </CardTitle>
+        <CardDescription>A pack of {credits} credits</CardDescription>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-2">
+        <div className="flex items-center gap-2">
+          <IoIosCheckmarkCircleOutline className="h-4 w-4" />
+          <p>{credits} credits</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <IoIosCheckmarkCircleOutline className="h-4 w-4" />
+          <p>1 credits = 1 thumbnail</p>
+        </div>
+      </CardContent>
+      <CardFooter>
+        {priceId && (
+          <Button
+            onClick={() => redirectToBillingSession(priceId)}
+            className="mt-6 w-full"
+          >
+            Buy now
+          </Button>
+        )}
+      </CardFooter>
+    </Card>
+  );
+};
+
+export default PricingCard;
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import Dropzone from "./dropzone";
+import Style from "./style";
+import { removeBackground } from "@imgly/background-removal";
+import { Button } from "./ui/button";
+import { IoMdArrowBack } from "react-icons/io";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
+import { Label } from "./ui/label";
+import { Input } from "./ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+import { inter, domine } from "../app/fonts";
+import { getPresignedUrl } from "~/app/actions/aws";
+import { generate, refresh } from "~/app/actions/generate";
+
+const presets = {
+  style1: {
+    fontSize: 100,
+    fontWeight: "bold",
+    color: "rgba(255, 255, 255, 1)",
+    opacity: 1,
+  },
+  style2: {
+    fontSize: 100,
+    fontWeight: "bold",
+    color: "rgba(0, 0, 0, 1)",
+    opacity: 1,
+  },
+  style3: {
+    fontSize: 100,
+    fontWeight: "bold",
+    color: "rgba(255, 255, 255, 0.8)",
+    opacity: 0.8,
+  },
+};
+
+const ThumbnailCreator = ({ children }: { children: React.ReactNode }) => {
+  const [selectedStyle, setSelectedStyle] = useState("style1");
+  const [loading, setLoading] = useState(false);
+  const [imageSrc, setImageSrc] = useState<string | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [processedImageSrc, setProcessedImageSrc] = useState<string | null>(
+    null,
+  );
+  const [canvasReady, setCanvasReady] = useState(false);
+  const [text, setText] = useState("POV");
+  const [font, setFont] = useState("arial");
+
+  const setSelectedImage = async (file?: File) => {
+    if (file) {
+      setLoading(true);
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const src = e.target?.result as string;
+        setImageSrc(src);
+
+        const blob = await removeBackground(src);
+        const processedUrl = URL.createObjectURL(blob);
+        setProcessedImageSrc(processedUrl);
+        setCanvasReady(true);
+        setLoading(false);
+      };
+      reader.readAsDataURL(file);
+      await generate();
+    }
+  };
+
+  useEffect(() => {
+    if (canvasReady) {
+      drawCompositeImage();
+    }
+  }, [canvasReady]);
+
+  const drawCompositeImage = () => {
+    if (!canvasRef.current || !canvasReady || !imageSrc || !processedImageSrc)
+      return;
+
+    const canvas = canvasRef.current;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const bgImg = new Image();
+
+    bgImg.onload = () => {
+      canvas.width = bgImg.width;
+      canvas.height = bgImg.height;
+
+      ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+
+      let preset = presets.style1;
+      switch (selectedStyle) {
+        case "style2":
+          preset = presets.style2;
+          break;
+        case "style3":
+          preset = presets.style3;
+          break;
+      }
+
+      ctx.save();
+
+      // Calculate font size to fill image 90% of the canvas
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+
+      let fontSize = 100;
+      let selectFont = "arial";
+      switch (font) {
+        case "inter":
+          selectFont = inter.style.fontFamily;
+          break;
+        case "domine":
+          selectFont = domine.style.fontFamily;
+          break;
+      }
+      ctx.font = `${preset.fontWeight} ${fontSize}px ${selectFont}`;
+      const textWidth = ctx.measureText(text).width;
+      const targetWidth = canvas.width * 0.9;
+
+      fontSize *= targetWidth / textWidth;
+      ctx.font = `${preset.fontWeight} ${fontSize}px ${selectFont}`;
+
+      ctx.fillStyle = preset.color;
+      ctx.globalAlpha = preset.opacity;
+
+      const x = canvas.width / 2;
+      const y = canvas.height / 2;
+
+      ctx.translate(x, y);
+      ctx.fillText(text, 0, 0);
+      ctx.restore();
+
+      const fgImg = new Image();
+      fgImg.onload = () => {
+        ctx.drawImage(fgImg, 0, 0, canvas.width, canvas.height);
+      };
+
+      fgImg.src = processedImageSrc;
+    };
+
+    bgImg.src = imageSrc;
+  };
+
+  const handleDownload = async () => {
+    if (canvasRef.current) {
+      const link = document.createElement("a");
+      link.download = "image.png";
+      link.href = canvasRef.current.toDataURL();
+      link.click();
+
+      canvasRef.current.toBlob((blob) => {
+        if (blob) {
+          void (async () => {
+            try {
+              const uploadUrl = await getPresignedUrl();
+              await fetch(uploadUrl, {
+                method: "PUT",
+                body: blob,
+                headers: {
+                  "Content-Type": "image/png",
+                },
+              });
+              console.log("File uploaded successfully");
+            } catch (error) {
+              console.log("Error uploading file");
+            }
+          })();
+        }
+      }, "image/png");
+    }
+  };
+
+  return (
+    <>
+      {imageSrc ? (
+        <>
+          {loading ? (
+            <div className="flex items-center justify-center">
+              <div className="h-10 w-10 animate-spin rounded-full border-2 border-dashed border-gray-800"></div>
+            </div>
+          ) : (
+            <div className="flex w-full max-w-2xl flex-col items-center gap-5">
+              <div className="my-4 flex w-full flex-col items-center gap-3">
+                <button
+                  onClick={async () => {
+                    setImageSrc(null);
+                    setProcessedImageSrc(null);
+                    setCanvasReady(false);
+                    await refresh();
+                  }}
+                  className="flex items-center gap-2 self-start"
+                >
+                  <IoMdArrowBack className="h-4 w-4" />
+                  <p className="leading-7">Go back</p>
+                </button>
+                <canvas
+                  ref={canvasRef}
+                  className="max-h-lg h-auto w-full max-w-lg rounded-lg"
+                ></canvas>
+              </div>
+              <Card className="w-full">
+                <CardHeader>
+                  <CardTitle>Edit</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid w-full items-center gap-4">
+                    <div className="flex flex-col gap-1.5">
+                      <Label htmlFor="text">Text</Label>
+                      <Input
+                        value={text}
+                        onChange={(e) => setText(e.target.value)}
+                        id="text"
+                        placeholder="Text in thumbnail"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <Label htmlFor="font">Font</Label>
+                      <Select
+                        value={font}
+                        onValueChange={(value) => setFont(value)}
+                      >
+                        <SelectTrigger id="font">
+                          <SelectValue placeholder="Select" />
+                        </SelectTrigger>
+                        <SelectContent position="popper">
+                          <SelectItem value="arial">Arial</SelectItem>
+                          <SelectItem value="inter">Inter</SelectItem>
+                          <SelectItem value="domine">Domine</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </CardContent>
+                <CardFooter className="flex flex-wrap justify-between gap-2">
+                  <Button onClick={() => handleDownload()}>Download</Button>
+                  <Button onClick={drawCompositeImage}>Update</Button>
+                </CardFooter>
+              </Card>
+            </div>
+          )}
+        </>
+      ) : (
+        <div className="mt-10 flex flex-col">
+          <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
+            Hi there
+          </h1>
+          <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
+            Want to create a thumbnail?
+          </h1>
+          <p className="mt-2 leading-7 text-muted-foreground">
+            Use one of the templates below
+          </p>
+          <div className="mt-10 flex flex-col items-center justify-between gap-10 md:flex-row md:items-start">
+            <Style
+              image="/style1.png"
+              selectStyle={() => setSelectedStyle("style1")}
+              isSelected={selectedStyle === "style1"}
+            />
+            <Style
+              image="/style2.png"
+              selectStyle={() => setSelectedStyle("style2")}
+              isSelected={selectedStyle === "style2"}
+            />
+            <Style
+              image="/style3.png"
+              selectStyle={() => setSelectedStyle("style3")}
+              isSelected={selectedStyle === "style3"}
+            />
+          </div>
+          <Dropzone setSelectedImage={setSelectedImage} />
+          <div className="mt-8">{children}</div>
+        </div>
+      )}
+    </>
+  );
+};
+
+export default ThumbnailCreator;
+"use server";
+
+import AWS from "aws-sdk";
+import { env } from "~/env";
+import DownloadRecentThumbnail from "./download-recent-thumbnail";
+import { Button } from "./ui/button";
+import { Separator } from "./ui/separator";
+
+type RecentProps = {
+  userId: string;
+};
+
+const Recent = async ({ userId }: RecentProps) => {
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
+
+  const s3 = new AWS.S3({
+    accessKeyId: env.MY_AWS_ACCESS_KEY,
+    secretAccessKey: env.MY_AWS_SECRET_KEY,
+    region: env.MY_AWS_REGION,
+  });
+
+  const prefix = `${userId}/`;
+
+  const params = {
+    Bucket: env.MY_AWS_BUCKET_NAME,
+    Prefix: prefix,
+    MaxKeys: 10,
+  };
+
+  const data = await s3.listObjectsV2(params).promise();
+
+  const recentThumbnails = data.Contents
+    ?.sort((a, b) => {
+      const dateA = a.LastModified?.getTime() ?? 0;
+      const dateB = b.LastModified?.getTime() ?? 0;
+      return dateB - dateA;
+    })
+    .map((item) => ({
+      url: `https://${env.MY_AWS_BUCKET_NAME}.s3.${env.MY_AWS_REGION}.amazonaws.com/${item.Key}`,
+      createdAt: item.LastModified ?? new Date(0),
+    }));
+
+  return (
+    <div className="flex flex-col">
+      <h3 className="scroll-m-20 text-xl font-semibold tracking-tight">
+        Recent thumbnails
+      </h3>
+      <p className="text-sm text-muted-foreground">
+        Download your most recent thumbnails.
+      </p>
+      <Separator className="my-2" />
+      {recentThumbnails?.length === 0 ? (
+        <p className="text-sm text-muted-foreground">No recent thumbnails.</p>
+      ) : (
+        <div className="flex h-fit max-w-full gap-2 overflow-x-scroll">
+          {recentThumbnails.map((thumbnail) => (
+            <div key={thumbnail.url} className="flex min-w-fit flex-col gap-1">
+              <img
+                src={thumbnail.url}
+                alt="image"
+                className="h-56 w-auto rounded-lg object-contain"
+              />
+              <p className="text-sm">
+                From{" "}
+                {new Date(thumbnail.createdAt).toLocaleDateString("en-GB", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                })}
+              </p>
+              <DownloadRecentThumbnail url={thumbnail.url} />
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Recent;
+
+"use client";
+
+import { useState } from "react";
+
+const Style = ({
+  image,
+  selectStyle,
+  isSelected,
+}: {
+  image: string;
+  selectStyle: () => void;
+  isSelected: boolean;
+}) => {
+  const [mouseOver, setMouseOver] = useState(false);
+
+  return (
+    <div
+      onMouseEnter={() => setMouseOver(true)}
+      onMouseLeave={() => setMouseOver(false)}
+      onClick={selectStyle}
+      className="relative w-fit cursor-pointer transition-all hover:scale-105"
+    >
+      {(mouseOver || isSelected) && (
+        <>
+          <div className="absolute -right-6 -top-4 h-4 w-4 -rotate-45 border-t border-black"></div>
+          <div className="absolute -right-3 -top-6 h-4 w-4 rotate-[-75deg] border-t border-black"></div>
+          <div className="absolute -right-7 -top-0 h-4 w-4 rotate-[-20deg] border-t border-black"></div>
+          <div className="absolute -bottom-6 -left-4 h-4 w-4 -rotate-45 border-t border-black"></div>
+          <div className="absolute -bottom-3 -left-6 h-4 w-4 rotate-[-20deg] border-t border-black"></div>
+          <div className="absolute -bottom-7 -left-0 h-4 w-4 rotate-[-75deg] border-t border-black"></div>
+        </>
+      )}
+      <img className="min-w-52 rounded-lg" src={image} />
+    </div>
+  );
+};
+
+export default Style;
+import { IoIosAdd } from "react-icons/io";
+
+const Dropzone = ({
+  setSelectedImage,
+}: {
+  setSelectedImage: (file?: File) => void;
+}) => {
+  return (
+    <div className="mt-16">
+      <input
+        onChange={(e) => setSelectedImage(e.target.files?.[0])}
+        className="hidden"
+        type="file"
+        id="file-upload"
+        accept="image/*"
+      />
+      <label
+        htmlFor="file-upload"
+        className="relative flex w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border border-[#F0EFEF] bg-white px-10 py-10"
+      >
+        <div className="absolute inset-3 rounded-xl border border-dashed border-[#F0EFEF]"></div>
+        <p>Upload file</p>
+        <svg
+          width="47"
+          height="47"
+          viewBox="0 0 47 47"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M41.125 23.5V37.2083C41.125 38.2471 40.7124 39.2433 39.9778 39.9778C39.2433 40.7124 38.2471 41.125 37.2083 41.125H9.79167C8.7529 41.125 7.75668 40.7124 7.02216 39.9778C6.28765 39.2433 5.875 38.2471 5.875 37.2083V9.79167C5.875 8.7529 6.28765 7.75668 7.02216 7.02216C7.75668 6.28765 8.7529 5.875 9.79167 5.875H23.5"
+            stroke="black"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M31.3333 9.79167H43.0833"
+            stroke="black"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M37.2083 3.91667V15.6667"
+            stroke="black"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M17.625 21.5417C19.7881 21.5417 21.5417 19.7881 21.5417 17.625C21.5417 15.4619 19.7881 13.7083 17.625 13.7083C15.4619 13.7083 13.7083 15.4619 13.7083 17.625C13.7083 19.7881 15.4619 21.5417 17.625 21.5417Z"
+            stroke="black"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M41.125 29.375L35.0816 23.3316C34.3471 22.5973 33.3511 22.1848 32.3125 22.1848C31.2739 22.1848 30.2779 22.5973 29.5434 23.3316L11.75 41.125"
+            stroke="black"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </label>
+    </div>
+  );
+};
+
+export default Dropzone;
+import * as React from "react"
+
+import { cn } from "~/lib/utils"
+
+const Card = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn(
+      "rounded-lg border bg-card text-card-foreground shadow-sm",
+      className
+    )}
+    {...props}
+  />
+))
+Card.displayName = "Card"
+
+const CardHeader = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("flex flex-col space-y-1.5 p-6", className)}
+    {...props}
+  />
+))
+CardHeader.displayName = "CardHeader"
+
+const CardTitle = React.forwardRef<
+  HTMLParagraphElement,
+  React.HTMLAttributes<HTMLHeadingElement>
+>(({ className, ...props }, ref) => (
+  <h3
+    ref={ref}
+    className={cn(
+      "text-2xl font-semibold leading-none tracking-tight",
+      className
+    )}
+    {...props}
+  />
+))
+CardTitle.displayName = "CardTitle"
+
+const CardDescription = React.forwardRef<
+  HTMLParagraphElement,
+  React.HTMLAttributes<HTMLParagraphElement>
+>(({ className, ...props }, ref) => (
+  <p
+    ref={ref}
+    className={cn("text-sm text-muted-foreground", className)}
+    {...props}
+  />
+))
+CardDescription.displayName = "CardDescription"
+
+const CardContent = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />
+))
+CardContent.displayName = "CardContent"
+
+const CardFooter = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("flex items-center p-6 pt-0", className)}
+    {...props}
+  />
+))
+CardFooter.displayName = "CardFooter"
+
+export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }
+"use client"
+
+import * as React from "react"
+import * as LabelPrimitive from "@radix-ui/react-label"
+import { cva, type VariantProps } from "class-variance-authority"
+
+import { cn } from "~/lib/utils"
+
+const labelVariants = cva(
+  "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+)
+
+const Label = React.forwardRef<
+  React.ElementRef<typeof LabelPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root> &
+    VariantProps<typeof labelVariants>
+>(({ className, ...props }, ref) => (
+  <LabelPrimitive.Root
+    ref={ref}
+    className={cn(labelVariants(), className)}
+    {...props}
+  />
+))
+Label.displayName = LabelPrimitive.Root.displayName
+
+export { Label }
+"use client";
+
+import { useForm } from "react-hook-form";
+import Link from "next/link";
+import { IoMdArrowBack } from "react-icons/io";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "./card";
+import { Label } from "./label";
+import { Input } from "./input";
+import { Button } from "./button";
+import { z } from "zod";
+import { signInSchema } from "~/schemas/auth";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "~/hooks/use-toast";
+import { useRouter } from "next/navigation";
+import { signup } from "~/app/actions/auth";
+
+type FormValues = z.infer<typeof signInSchema>;
+
+const Signup = () => {
+  const router = useRouter();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<FormValues>({ resolver: zodResolver(signInSchema) });
+
+  const onSubmit = async (data: FormValues) => {
+    const error = await signup(data.email, data.password);
+
+    if (error) {
+      toast({
+        title: "Sign up failed",
+        description: error,
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Sign up successful",
+        description: "You can now sign in with your new account.",
+      });
+      router.push("/signin");
+    }
+  };
+
+  return (
+    <div className="flex h-screen items-center justify-center">
+      <div className="flex flex-col gap-4">
+        <Link href="/" className="flex items-center gap-2">
+          <IoMdArrowBack className="h-4 w-4" />
+          <p className="leading-7">Go back</p>
+        </Link>
+        <Card className="w-full max-w-sm">
+          <CardHeader>
+            <CardTitle className="text-2xl">Sign up</CardTitle>
+            <CardDescription>
+              Enter your email and a password below to sign up.
+            </CardDescription>
+          </CardHeader>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <CardContent className="grid gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  {...register("email")}
+                  id="email"
+                  type="email"
+                  placeholder="mail@gmail.com"
+                />
+                {errors.email && (
+                  <p className="text-sm text-red-500">{errors.email.message}</p>
+                )}
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="password">Password</Label>
+                <Input {...register("password")} id="password" type="password" />
+                {errors.password && (
+                  <p className="text-sm text-red-500">{errors.password.message}</p>
+                )}
+              </div>
+            </CardContent>
+            <CardFooter className="flex flex-col gap-2">
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
+                Sign up
+              </Button>
+              <Link href="/signin">
+                <Button variant="link">Already have an account?</Button>
+              </Link>
+            </CardFooter>
+          </form>
+        </Card>
+      </div>
+    </div>
+  );
+};
+
+export default Signup;
+
+"use client"
+
+import { useToast } from "~/hooks/use-toast"
+import {
+  Toast,
+  ToastClose,
+  ToastDescription,
+  ToastProvider,
+  ToastTitle,
+  ToastViewport,
+} from "~/components/ui/toast"
+
+export function Toaster() {
+  const { toasts } = useToast()
+
+  return (
+    <ToastProvider>
+      {toasts.map(function ({ id, title, description, action, ...props }) {
+        return (
+          <Toast key={id} {...props}>
+            <div className="grid gap-1">
+              {title && <ToastTitle>{title}</ToastTitle>}
+              {description && (
+                <ToastDescription>{description}</ToastDescription>
+              )}
+            </div>
+            {action}
+            <ToastClose />
+          </Toast>
+        )
+      })}
+      <ToastViewport />
+    </ToastProvider>
+  )
+}
+"use client"
+
+import * as React from "react"
+import * as ToastPrimitives from "@radix-ui/react-toast"
+import { cva, type VariantProps } from "class-variance-authority"
+import { X } from "lucide-react"
+
+import { cn } from "~/lib/utils"
+
+const ToastProvider = ToastPrimitives.Provider
+
+const ToastViewport = React.forwardRef<
+  React.ElementRef<typeof ToastPrimitives.Viewport>,
+  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Viewport>
+>(({ className, ...props }, ref) => (
+  <ToastPrimitives.Viewport
+    ref={ref}
+    className={cn(
+      "fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]",
+      className
+    )}
+    {...props}
+  />
+))
+ToastViewport.displayName = ToastPrimitives.Viewport.displayName
+
+const toastVariants = cva(
+  "group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full",
+  {
+    variants: {
+      variant: {
+        default: "border bg-background text-foreground",
+        destructive:
+          "destructive group border-destructive bg-destructive text-destructive-foreground",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  }
+)
+
+const Toast = React.forwardRef<
+  React.ElementRef<typeof ToastPrimitives.Root>,
+  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root> &
+    VariantProps<typeof toastVariants>
+>(({ className, variant, ...props }, ref) => {
+  return (
+    <ToastPrimitives.Root
+      ref={ref}
+      className={cn(toastVariants({ variant }), className)}
+      {...props}
+    />
+  )
+})
+Toast.displayName = ToastPrimitives.Root.displayName
+
+const ToastAction = React.forwardRef<
+  React.ElementRef<typeof ToastPrimitives.Action>,
+  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Action>
+>(({ className, ...props }, ref) => (
+  <ToastPrimitives.Action
+    ref={ref}
+    className={cn(
+      "inline-flex h-8 shrink-0 items-center justify-center rounded-md border bg-transparent px-3 text-sm font-medium ring-offset-background transition-colors hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 group-[.destructive]:border-muted/40 group-[.destructive]:hover:border-destructive/30 group-[.destructive]:hover:bg-destructive group-[.destructive]:hover:text-destructive-foreground group-[.destructive]:focus:ring-destructive",
+      className
+    )}
+    {...props}
+  />
+))
+ToastAction.displayName = ToastPrimitives.Action.displayName
+
+const ToastClose = React.forwardRef<
+  React.ElementRef<typeof ToastPrimitives.Close>,
+  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Close>
+>(({ className, ...props }, ref) => (
+  <ToastPrimitives.Close
+    ref={ref}
+    className={cn(
+      "absolute right-2 top-2 rounded-md p-1 text-foreground/50 opacity-0 transition-opacity hover:text-foreground focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100 group-[.destructive]:text-red-300 group-[.destructive]:hover:text-red-50 group-[.destructive]:focus:ring-red-400 group-[.destructive]:focus:ring-offset-red-600",
+      className
+    )}
+    toast-close=""
+    {...props}
+  >
+    <X className="h-4 w-4" />
+  </ToastPrimitives.Close>
+))
+ToastClose.displayName = ToastPrimitives.Close.displayName
+
+const ToastTitle = React.forwardRef<
+  React.ElementRef<typeof ToastPrimitives.Title>,
+  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Title>
+>(({ className, ...props }, ref) => (
+  <ToastPrimitives.Title
+    ref={ref}
+    className={cn("text-sm font-semibold", className)}
+    {...props}
+  />
+))
+ToastTitle.displayName = ToastPrimitives.Title.displayName
+
+const ToastDescription = React.forwardRef<
+  React.ElementRef<typeof ToastPrimitives.Description>,
+  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Description>
+>(({ className, ...props }, ref) => (
+  <ToastPrimitives.Description
+    ref={ref}
+    className={cn("text-sm opacity-90", className)}
+    {...props}
+  />
+))
+ToastDescription.displayName = ToastPrimitives.Description.displayName
+
+type ToastProps = React.ComponentPropsWithoutRef<typeof Toast>
+
+type ToastActionElement = React.ReactElement<typeof ToastAction>
+
+export {
+  type ToastProps,
+  type ToastActionElement,
+  ToastProvider,
+  ToastViewport,
+  Toast,
+  ToastTitle,
+  ToastDescription,
+  ToastClose,
+  ToastAction,
+}
+import * as React from "react"
+import { Slot } from "@radix-ui/react-slot"
+import { cva, type VariantProps } from "class-variance-authority"
+
+import { cn } from "~/lib/utils"
+
+const buttonVariants = cva(
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        destructive:
+          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+        outline:
+          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+        secondary:
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        ghost: "hover:bg-accent hover:text-accent-foreground",
+        link: "text-primary underline-offset-4 hover:underline",
+      },
+      size: {
+        default: "h-10 px-4 py-2",
+        sm: "h-9 rounded-md px-3",
+        lg: "h-11 rounded-md px-8",
+        icon: "h-10 w-10",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+)
+
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
+  asChild?: boolean
+}
+
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant, size, asChild = false, ...props }, ref) => {
+    const Comp = asChild ? Slot : "button"
+    return (
+      <Comp
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref}
+        {...props}
+      />
+    )
+  }
+)
+Button.displayName = "Button"
+
+export { Button, buttonVariants }
+import * as React from "react";
+
+import { cn } from "~/lib/utils";
+
+export type InputProps = React.InputHTMLAttributes<HTMLInputElement>;
+
+const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  ({ className, type, ...props }, ref) => {
+    return (
+      <input
+        type={type}
+        className={cn(
+          "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+          className,
+        )}
+        ref={ref}
+        {...props}
+      />
+    );
+  },
+);
+Input.displayName = "Input";
+
+export { Input };
+"use client"
+
+import * as React from "react"
+import * as SelectPrimitive from "@radix-ui/react-select"
+import { Check, ChevronDown, ChevronUp } from "lucide-react"
+
+import { cn } from "~/lib/utils"
+
+const Select = SelectPrimitive.Root
+
+const SelectGroup = SelectPrimitive.Group
+
+const SelectValue = SelectPrimitive.Value
+
+const SelectTrigger = React.forwardRef<
+  React.ElementRef<typeof SelectPrimitive.Trigger>,
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
+>(({ className, children, ...props }, ref) => (
+  <SelectPrimitive.Trigger
+    ref={ref}
+    className={cn(
+      "flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
+      className
+    )}
+    {...props}
+  >
+    {children}
+    <SelectPrimitive.Icon asChild>
+      <ChevronDown className="h-4 w-4 opacity-50" />
+    </SelectPrimitive.Icon>
+  </SelectPrimitive.Trigger>
+))
+SelectTrigger.displayName = SelectPrimitive.Trigger.displayName
+
+const SelectScrollUpButton = React.forwardRef<
+  React.ElementRef<typeof SelectPrimitive.ScrollUpButton>,
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollUpButton>
+>(({ className, ...props }, ref) => (
+  <SelectPrimitive.ScrollUpButton
+    ref={ref}
+    className={cn(
+      "flex cursor-default items-center justify-center py-1",
+      className
+    )}
+    {...props}
+  >
+    <ChevronUp className="h-4 w-4" />
+  </SelectPrimitive.ScrollUpButton>
+))
+SelectScrollUpButton.displayName = SelectPrimitive.ScrollUpButton.displayName
+
+const SelectScrollDownButton = React.forwardRef<
+  React.ElementRef<typeof SelectPrimitive.ScrollDownButton>,
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollDownButton>
+>(({ className, ...props }, ref) => (
+  <SelectPrimitive.ScrollDownButton
+    ref={ref}
+    className={cn(
+      "flex cursor-default items-center justify-center py-1",
+      className
+    )}
+    {...props}
+  >
+    <ChevronDown className="h-4 w-4" />
+  </SelectPrimitive.ScrollDownButton>
+))
+SelectScrollDownButton.displayName =
+  SelectPrimitive.ScrollDownButton.displayName
+
+const SelectContent = React.forwardRef<
+  React.ElementRef<typeof SelectPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
+>(({ className, children, position = "popper", ...props }, ref) => (
+  <SelectPrimitive.Portal>
+    <SelectPrimitive.Content
+      ref={ref}
+      className={cn(
+        "relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+        position === "popper" &&
+          "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
+        className
+      )}
+      position={position}
+      {...props}
+    >
+      <SelectScrollUpButton />
+      <SelectPrimitive.Viewport
+        className={cn(
+          "p-1",
+          position === "popper" &&
+            "h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]"
+        )}
+      >
+        {children}
+      </SelectPrimitive.Viewport>
+      <SelectScrollDownButton />
+    </SelectPrimitive.Content>
+  </SelectPrimitive.Portal>
+))
+SelectContent.displayName = SelectPrimitive.Content.displayName
+
+const SelectLabel = React.forwardRef<
+  React.ElementRef<typeof SelectPrimitive.Label>,
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Label>
+>(({ className, ...props }, ref) => (
+  <SelectPrimitive.Label
+    ref={ref}
+    className={cn("py-1.5 pl-8 pr-2 text-sm font-semibold", className)}
+    {...props}
+  />
+))
+SelectLabel.displayName = SelectPrimitive.Label.displayName
+
+const SelectItem = React.forwardRef<
+  React.ElementRef<typeof SelectPrimitive.Item>,
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>
+>(({ className, children, ...props }, ref) => (
+  <SelectPrimitive.Item
+    ref={ref}
+    className={cn(
+      "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      className
+    )}
+    {...props}
+  >
+    <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+      <SelectPrimitive.ItemIndicator>
+        <Check className="h-4 w-4" />
+      </SelectPrimitive.ItemIndicator>
+    </span>
+
+    <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
+  </SelectPrimitive.Item>
+))
+SelectItem.displayName = SelectPrimitive.Item.displayName
+
+const SelectSeparator = React.forwardRef<
+  React.ElementRef<typeof SelectPrimitive.Separator>,
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Separator>
+>(({ className, ...props }, ref) => (
+  <SelectPrimitive.Separator
+    ref={ref}
+    className={cn("-mx-1 my-1 h-px bg-muted", className)}
+    {...props}
+  />
+))
+SelectSeparator.displayName = SelectPrimitive.Separator.displayName
+
+export {
+  Select,
+  SelectGroup,
+  SelectValue,
+  SelectTrigger,
+  SelectContent,
+  SelectLabel,
+  SelectItem,
+  SelectSeparator,
+  SelectScrollUpButton,
+  SelectScrollDownButton,
+}
+"use client"
+
+import * as React from "react"
+import * as SeparatorPrimitive from "@radix-ui/react-separator"
+
+import { cn } from "~/lib/utils"
+
+const Separator = React.forwardRef<
+  React.ElementRef<typeof SeparatorPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof SeparatorPrimitive.Root>
+>(
+  (
+    { className, orientation = "horizontal", decorative = true, ...props },
+    ref
+  ) => (
+    <SeparatorPrimitive.Root
+      ref={ref}
+      decorative={decorative}
+      orientation={orientation}
+      className={cn(
+        "shrink-0 bg-border",
+        orientation === "horizontal" ? "h-[1px] w-full" : "h-full w-[1px]",
+        className
+      )}
+      {...props}
+    />
+  )
+)
+Separator.displayName = SeparatorPrimitive.Root.displayName
+
+export { Separator }
+"use client"
+
+import { useForm } from "react-hook-form"
+import Link from "next/link"
+import { IoMdArrowBack } from "react-icons/io"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "./card"
+import { Label } from "./label"
+import { Input } from "./input"
+import { Button } from "./button"
+import { z } from "zod"
+import { signInSchema } from "~/schemas/auth"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { toast } from "~/hooks/use-toast"
+import { useRouter } from "next/navigation"
+
+type FormValues = z.infer<typeof signInSchema>
+
+const Signin = () => {
+  const router = useRouter()
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormValues>({ resolver: zodResolver(signInSchema) })
+
+  const onSubmit = async (data: FormValues) => {
+    try {
+      const res = await fetch("/api/signin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: data.email, password: data.password }),
+      })
+
+      const json = await res.json()
+
+      if (!res.ok) {
+        toast({
+          title: "Sign in failed",
+          description: json.error || "Unknown error",
+          variant: "destructive",
+        })
+        return
+      }
+
+      // Save JWT token (example using localStorage)
+      localStorage.setItem("token", json.token)
+
+      toast({
+        title: "Signed in",
+        description: "Welcome back!",
+      })
+
+      router.push("/dashboard")
+    } catch {
+      toast({
+        title: "Sign in failed",
+        description: "Network error",
+        variant: "destructive",
+      })
+    }
+  }
+
+  return (
+    <div className="flex h-screen items-center justify-center">
+      <div className="flex flex-col gap-4">
+        <Link href="/" className="flex items-center gap-2">
+          <IoMdArrowBack className="h-4 w-4" />
+          <p className="leading-7">Go back</p>
+        </Link>
+        <Card className="w-full max-w-sm">
+          <CardHeader>
+            <CardTitle className="text-2xl">Sign in</CardTitle>
+            <CardDescription>
+              Enter your email and password below to sign in.
+            </CardDescription>
+          </CardHeader>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <CardContent className="grid gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  {...register("email")}
+                  id="email"
+                  type="email"
+                  placeholder="mail@gmail.com"
+                />
+                {errors.email && (
+                  <p className="text-sm text-red-500">{errors.email.message}</p>
+                )}
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="password">Password</Label>
+                <Input {...register("password")} id="password" type="password" />
+                {errors.password && (
+                  <p className="text-sm text-red-500">{errors.password.message}</p>
+                )}
+              </div>
+            </CardContent>
+            <CardFooter className="flex flex-col gap-2">
+              <Button type="submit" className="w-full">
+                Sign in
+              </Button>
+              <Link href="/signup">
+                <Button variant="link">Don&apos;t have an account?</Button>
+              </Link>
+            </CardFooter>
+          </form>
+        </Card>
+      </div>
+    </div>
+  )
+}
+
+export default Signin
+
+"use client"
+
+// Inspired by react-hot-toast library
+import * as React from "react"
+
+import type {
+  ToastActionElement,
+  ToastProps,
+} from "~/components/ui/toast"
+
+const TOAST_LIMIT = 1
+const TOAST_REMOVE_DELAY = 1000000
+
+type ToasterToast = ToastProps & {
+  id: string
+  title?: React.ReactNode
+  description?: React.ReactNode
+  action?: ToastActionElement
+}
+
+const actionTypes = {
+  ADD_TOAST: "ADD_TOAST",
+  UPDATE_TOAST: "UPDATE_TOAST",
+  DISMISS_TOAST: "DISMISS_TOAST",
+  REMOVE_TOAST: "REMOVE_TOAST",
+} as const
+
+let count = 0
+
+function genId() {
+  count = (count + 1) % Number.MAX_SAFE_INTEGER
+  return count.toString()
+}
+
+type ActionType = typeof actionTypes
+
+type Action =
+  | {
+      type: ActionType["ADD_TOAST"]
+      toast: ToasterToast
+    }
+  | {
+      type: ActionType["UPDATE_TOAST"]
+      toast: Partial<ToasterToast>
+    }
+  | {
+      type: ActionType["DISMISS_TOAST"]
+      toastId?: ToasterToast["id"]
+    }
+  | {
+      type: ActionType["REMOVE_TOAST"]
+      toastId?: ToasterToast["id"]
+    }
+
+interface State {
+  toasts: ToasterToast[]
+}
+
+const toastTimeouts = new Map<string, ReturnType<typeof setTimeout>>()
+
+const addToRemoveQueue = (toastId: string) => {
+  if (toastTimeouts.has(toastId)) {
+    return
+  }
+
+  const timeout = setTimeout(() => {
+    toastTimeouts.delete(toastId)
+    dispatch({
+      type: "REMOVE_TOAST",
+      toastId: toastId,
+    })
+  }, TOAST_REMOVE_DELAY)
+
+  toastTimeouts.set(toastId, timeout)
+}
+
+export const reducer = (state: State, action: Action): State => {
+  switch (action.type) {
+    case "ADD_TOAST":
+      return {
+        ...state,
+        toasts: [action.toast, ...state.toasts].slice(0, TOAST_LIMIT),
+      }
+
+    case "UPDATE_TOAST":
+      return {
+        ...state,
+        toasts: state.toasts.map((t) =>
+          t.id === action.toast.id ? { ...t, ...action.toast } : t
+        ),
+      }
+
+    case "DISMISS_TOAST": {
+      const { toastId } = action
+
+      // ! Side effects ! - This could be extracted into a dismissToast() action,
+      // but I'll keep it here for simplicity
+      if (toastId) {
+        addToRemoveQueue(toastId)
+      } else {
+        state.toasts.forEach((toast) => {
+          addToRemoveQueue(toast.id)
+        })
+      }
+
+      return {
+        ...state,
+        toasts: state.toasts.map((t) =>
+          t.id === toastId || toastId === undefined
+            ? {
+                ...t,
+                open: false,
+              }
+            : t
+        ),
+      }
+    }
+    case "REMOVE_TOAST":
+      if (action.toastId === undefined) {
+        return {
+          ...state,
+          toasts: [],
+        }
+      }
+      return {
+        ...state,
+        toasts: state.toasts.filter((t) => t.id !== action.toastId),
+      }
+  }
+}
+
+const listeners: Array<(state: State) => void> = []
+
+let memoryState: State = { toasts: [] }
+
+function dispatch(action: Action) {
+  memoryState = reducer(memoryState, action)
+  listeners.forEach((listener) => {
+    listener(memoryState)
+  })
+}
+
+type Toast = Omit<ToasterToast, "id">
+
+function toast({ ...props }: Toast) {
+  const id = genId()
+
+  const update = (props: ToasterToast) =>
+    dispatch({
+      type: "UPDATE_TOAST",
+      toast: { ...props, id },
+    })
+  const dismiss = () => dispatch({ type: "DISMISS_TOAST", toastId: id })
+
+  dispatch({
+    type: "ADD_TOAST",
+    toast: {
+      ...props,
+      id,
+      open: true,
+      onOpenChange: (open) => {
+        if (!open) dismiss()
+      },
+    },
+  })
+
+  return {
+    id: id,
+    dismiss,
+    update,
+  }
+}
+
+function useToast() {
+  const [state, setState] = React.useState<State>(memoryState)
+
+  React.useEffect(() => {
+    listeners.push(setState)
+    return () => {
+      const index = listeners.indexOf(setState)
+      if (index > -1) {
+        listeners.splice(index, 1)
+      }
+    }
+  }, [state])
+
+  return {
+    ...state,
+    toast,
+    dismiss: (toastId?: string) => dispatch({ type: "DISMISS_TOAST", toastId }),
+  }
+}
+
+export { useToast, toast }
+/** @type {import('prettier').Config & import('prettier-plugin-tailwindcss').PluginOptions} */
+const config = {
+  plugins: ["prettier-plugin-tailwindcss"],
+};
+
+export default config;
+{
+  "compilerOptions": {
+    /* Base Options: */
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "target": "es2022",
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "moduleDetection": "force",
+    "isolatedModules": true,
+
+    /* Strictness */
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "checkJs": true,
+
+    /* Bundled projects */
+    "lib": ["dom", "dom.iterable", "ES2022"],
+    "noEmit": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "jsx": "preserve",
+    "plugins": [{ "name": "next" }],
+    "incremental": true,
+
+    /* Path Aliases */
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["./src/*"]
+    }
+  },
+  "include": [
+    ".eslintrc.cjs",
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.cjs",
+    "**/*.js",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": ["node_modules"]
+}
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "default",
+  "rsc": true,
+  "tsx": true,
+  "tailwind": {
+    "config": "tailwind.config.ts",
+    "css": "src/styles/globals.css",
+    "baseColor": "neutral",
+    "cssVariables": true,
+    "prefix": ""
+  },
+  "aliases": {
+    "components": "~/components",
+    "utils": "~/lib/utils",
+    "ui": "~/components/ui",
+    "lib": "~/lib",
+    "hooks": "~/hooks"
+  }
+}import { type Config } from "tailwindcss";
+import { fontFamily } from "tailwindcss/defaultTheme";
+
+export default {
+    darkMode: ["class"],
+    content: ["./src/**/*.tsx"],
+  theme: {
+  	extend: {
+  		fontFamily: {
+  			sans: ["var(--font-geist-sans)", ...fontFamily.sans]
+  		},
+  		borderRadius: {
+  			lg: 'var(--radius)',
+  			md: 'calc(var(--radius) - 2px)',
+  			sm: 'calc(var(--radius) - 4px)'
+  		},
+  		colors: {
+  			background: 'hsl(var(--background))',
+  			foreground: 'hsl(var(--foreground))',
+  			card: {
+  				DEFAULT: 'hsl(var(--card))',
+  				foreground: 'hsl(var(--card-foreground))'
+  			},
+  			popover: {
+  				DEFAULT: 'hsl(var(--popover))',
+  				foreground: 'hsl(var(--popover-foreground))'
+  			},
+  			primary: {
+  				DEFAULT: 'hsl(var(--primary))',
+  				foreground: 'hsl(var(--primary-foreground))'
+  			},
+  			secondary: {
+  				DEFAULT: 'hsl(var(--secondary))',
+  				foreground: 'hsl(var(--secondary-foreground))'
+  			},
+  			muted: {
+  				DEFAULT: 'hsl(var(--muted))',
+  				foreground: 'hsl(var(--muted-foreground))'
+  			},
+  			accent: {
+  				DEFAULT: 'hsl(var(--accent))',
+  				foreground: 'hsl(var(--accent-foreground))'
+  			},
+  			destructive: {
+  				DEFAULT: 'hsl(var(--destructive))',
+  				foreground: 'hsl(var(--destructive-foreground))'
+  			},
+  			border: 'hsl(var(--border))',
+  			input: 'hsl(var(--input))',
+  			ring: 'hsl(var(--ring))',
+  			chart: {
+  				'1': 'hsl(var(--chart-1))',
+  				'2': 'hsl(var(--chart-2))',
+  				'3': 'hsl(var(--chart-3))',
+  				'4': 'hsl(var(--chart-4))',
+  				'5': 'hsl(var(--chart-5))'
+  			}
+  		}
+  	}
+  },
+  plugins: [require("tailwindcss-animate")],
+} satisfies Config;
+/**
+ * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially useful
+ * for Docker builds.
+ */
+await import("./src/env.js");
+
+/** @type {import("next").NextConfig} */
+const config = {};
+
+export default config;
+{
+  "name": "thumbnails",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "next build",
+    "db:generate": "prisma migrate dev",
+    "db:migrate": "prisma migrate deploy",
+    "db:push": "prisma db push",
+    "db:studio": "prisma studio",
+    "dev": "next dev",
+    "postinstall": "prisma generate",
+    "lint": "next lint",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@auth/prisma-adapter": "^1.6.0",
+    "@clerk/nextjs": "^6.20.2",
+    "@hookform/resolvers": "^3.9.0",
+    "@imgly/background-removal": "^1.5.5",
+    "@prisma/client": "^5.14.0",
+    "@radix-ui/react-label": "^2.1.0",
+    "@radix-ui/react-select": "^2.1.2",
+    "@radix-ui/react-separator": "^1.1.0",
+    "@radix-ui/react-slot": "^1.1.0",
+    "@radix-ui/react-toast": "^1.2.2",
+    "@t3-oss/env-nextjs": "^0.10.1",
+    "aws-sdk": "^2.1691.0",
+    "bcrypt": "^6.0.0",
+    "bcryptjs": "^2.4.3",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
+    "geist": "^1.3.0",
+    "jsonwebtoken": "^9.0.2",
+    "lucide-react": "^0.453.0",
+    "next": "^15.3.3",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-hook-form": "^7.53.1",
+    "react-icons": "^5.3.0",
+    "stripe": "^17.3.1",
+    "tailwind-merge": "^2.5.4",
+    "tailwindcss-animate": "^1.0.7",
+    "zod": "^3.23.3"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/eslint": "^8.56.10",
+    "@types/node": "^20.14.10",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@typescript-eslint/eslint-plugin": "^8.1.0",
+    "@typescript-eslint/parser": "^8.1.0",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "^14.2.4",
+    "postcss": "^8.4.39",
+    "prettier": "^3.3.2",
+    "prettier-plugin-tailwindcss": "^0.6.5",
+    "prisma": "^5.14.0",
+    "tailwindcss": "^3.4.3",
+    "typescript": "^5.5.3"
+  },
+  "ct3aMetadata": {
+    "initVersion": "7.37.0"
+  },
+  "packageManager": "npm@10.2.4"
+}
+const config = {
+  plugins: {
+    tailwindcss: {},
+  },
+};
+
+module.exports = config;

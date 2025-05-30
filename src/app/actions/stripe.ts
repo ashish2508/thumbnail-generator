@@ -4,14 +4,14 @@ import { redirect } from "next/navigation";
 import { env } from "~/env";
 import { db } from "~/server/db";
 import Stripe from "stripe";
-import { getAuth } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 
 export const redirectToBillingSession = async (priceId: string) => {
   if (![env.STRIPE_10_PACK, env.STRIPE_25_PACK, env.STRIPE_100_PACK].includes(priceId)) {
     throw new Error("Invalid priceId");
   }
 
-  const { userId } = getAuth();
+  const { userId } = await auth();
 
   if (!userId) throw new Error("Not authenticated");
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { IoIosCheckmarkCircleOutline, IoMdArrowBack } from "react-icons/io";
+import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 import { redirectToBillingSession } from "~/app/actions/stripe";
 import { Button } from "~/components/ui/button";
 import {
@@ -12,7 +12,7 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 
-const PricingCard = ({
+export const PricingCard = ({
   pricing,
   credits,
   priceId,
@@ -56,4 +56,3 @@ const PricingCard = ({
   );
 };
 
-export default PricingCard;

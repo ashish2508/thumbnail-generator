@@ -1,7 +1,7 @@
 "use server";
 
 import AWS from "aws-sdk";
-import { getAuth } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 import { env } from "~/env";
 import { format } from "date-fns";
 import { redirect } from "next/navigation";
@@ -13,7 +13,7 @@ const s3 = new AWS.S3({
 });
 
 export const getPresignedUrl = async () => {
-  const { userId } = getAuth();
+  const { userId } = await auth();
 
   if (!userId) {
     throw new Error("User not authenticated");
@@ -35,7 +35,7 @@ export const getPresignedUrl = async () => {
 };
 
 export const downloadS3File = async (url: string) => {
-  const { userId } = getAuth();
+  const { userId } = await auth();
 
   if (!userId) {
     throw new Error("User not authenticated");

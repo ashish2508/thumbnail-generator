@@ -1,33 +1,18 @@
 "use server";
 
-import { getAuth } from "@clerk/nextjs/server";
-import Link from "next/link";
+import Link from 'next/link';
+import Image from 'next/image';
+import { PricingCard } from '~/components/pricing-card';
+import { auth } from "@clerk/nextjs/server";
 import { Button } from "~/components/ui/button";
-import Image from "next/image";
-import PricingCard from "~/components/pricing-card";
+import { env } from "~/env";
 
 export default async function HomePage() {
-  const { userId } = getAuth();
+  const { userId } = await auth();
   const isSignedIn = !!userId;
 
   return (
     <div className="flex h-screen flex-col items-center overflow-y-scroll px-6 py-6">
-      <nav className="flex w-full items-center justify-between pb-6 md:px-8">
-        <Link href="/" className="text-lg font-semibold leading-7">
-          Thumbnails
-        </Link>
-        <div className="flex items-center">
-          {isSignedIn ? (
-            <Button>
-              <Link href="/dashboard">Go to dashboard</Link>
-            </Button>
-          ) : (
-            <Button>
-              <Link href="/signin">Sign In</Link>
-            </Button>
-          )}
-        </div>
-      </nav>
       <div className="mt-2 flex flex-col gap-20 md:mt-14">
         <div className="flex flex-col gap-1 md:flex-row md:items-center md:gap-10">
           <div className="flex max-w-2xl flex-col gap-1 md:w-1/2">
@@ -62,9 +47,9 @@ export default async function HomePage() {
             Pricing
           </h2>
           <div className="flex flex-col gap-4 md:flex-row">
-            <PricingCard pricing="$2" credits="10" />
-            <PricingCard pricing="$5" credits="25" />
-            <PricingCard pricing="$10" credits="100" />
+            <PricingCard pricing="$2" credits="10" priceId={env.STRIPE_10_PACK} />
+            <PricingCard pricing="$5" credits="25" priceId={env.STRIPE_25_PACK} />
+            <PricingCard pricing="$10" credits="100" priceId={env.STRIPE_100_PACK} />
           </div>
         </div>
       </div>

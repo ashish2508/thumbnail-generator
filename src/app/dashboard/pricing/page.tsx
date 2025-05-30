@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { IoMdArrowBack } from "react-icons/io";
-import PricingCard from "~/components/pricing-card";
+import { PricingCard } from "~/components/pricing-card";
 import { env } from "~/env";
 
 const Page = async () => {
@@ -36,3 +36,4 @@ const Page = async () => {
 };
 
 export default Page;
+

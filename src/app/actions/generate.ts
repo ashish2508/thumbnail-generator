@@ -2,10 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { db } from "~/server/db";
-import { getAuth } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 
 export const generate = async () => {
-  const { userId } = getAuth();
+  const { userId } = await auth();
 
   if (!userId) throw new Error("Not authenticated");
 

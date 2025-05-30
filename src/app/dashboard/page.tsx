@@ -1,6 +1,6 @@
-"use server";
+"use server"
 
-import { getAuth } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 import Recent from "~/components/recent";
 import ThumbnailCreator from "~/components/thumbnail-creator";
@@ -8,15 +8,15 @@ import { Button } from "~/components/ui/button";
 import { db } from "~/server/db";
 
 const Page = async () => {
-  const { userId } = getAuth();
+  const { userId } = await auth();
 
   if (!userId) {
     return (
-      <div className="flex h-screen items-center justify-center">
+      <div className="flex h-screen items-center justify-center bg-black">
         <p>Please sign in to access this page.</p>
-        <Link href="/signin">
-          <Button>Sign In</Button>
-        </Link>
+        <Button className="mt-6 w-full">
+          <Link href="/signin">Sign In</Link>
+        </Button>
       </div>
     );
   }
@@ -46,12 +46,12 @@ const Page = async () => {
               </Link>
             </div>
             <div className="mt-8">
-              <Recent />
+              <Recent userId={userId} />
             </div>
           </div>
         ) : (
           <ThumbnailCreator>
-            <Recent />
+            <Recent userId={userId} />
           </ThumbnailCreator>
         )}
       </div>

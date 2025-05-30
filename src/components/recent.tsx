@@ -31,8 +31,8 @@ const Recent = async ({ userId }: RecentProps) => {
 
   const data = await s3.listObjectsV2(params).promise();
 
-  const recentThumbnails = data.Contents
-    ?.sort((a, b) => {
+  const recentThumbnails = (data.Contents ?? [])
+    .sort((a, b) => {
       const dateA = a.LastModified?.getTime() ?? 0;
       const dateB = b.LastModified?.getTime() ?? 0;
       return dateB - dateA;
@@ -51,7 +51,7 @@ const Recent = async ({ userId }: RecentProps) => {
         Download your most recent thumbnails.
       </p>
       <Separator className="my-2" />
-      {recentThumbnails?.length === 0 ? (
+      {recentThumbnails.length === 0 ? (
         <p className="text-sm text-muted-foreground">No recent thumbnails.</p>
       ) : (
         <div className="flex h-fit max-w-full gap-2 overflow-x-scroll">
