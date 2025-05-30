@@ -1,14 +1,15 @@
 "use server";
 
-import { getServerSession } from "next-auth";
+import { getAuth } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { Button } from "~/components/ui/button";
-import { authOptions } from "~/server/auth";
 import Image from "next/image";
 import PricingCard from "~/components/pricing-card";
 
 export default async function HomePage() {
-  const user = await getServerSession(authOptions);
+  const { userId } = getAuth();
+  const isSignedIn = !!userId;
+
   return (
     <div className="flex h-screen flex-col items-center overflow-y-scroll px-6 py-6">
       <nav className="flex w-full items-center justify-between pb-6 md:px-8">
@@ -16,7 +17,7 @@ export default async function HomePage() {
           Thumbnails
         </Link>
         <div className="flex items-center">
-          {user?.user ? (
+          {isSignedIn ? (
             <Button>
               <Link href="/dashboard">Go to dashboard</Link>
             </Button>
@@ -31,13 +32,13 @@ export default async function HomePage() {
         <div className="flex flex-col gap-1 md:flex-row md:items-center md:gap-10">
           <div className="flex max-w-2xl flex-col gap-1 md:w-1/2">
             <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
-              Easier thumnails <br /> for creators
+              Easier thumbnails <br /> for creators
             </h1>
             <p className="mt-4 text-lg text-muted-foreground">
               Thumbnails with text behind the foreground are popular, but takes
               time to make manually. Generate them automatically with this tool.
             </p>
-            {user?.user ? (
+            {isSignedIn ? (
               <Button className="mt-6 w-full md:w-fit">
                 <Link href="/dashboard">Go to dashboard</Link>
               </Button>
@@ -70,3 +71,4 @@ export default async function HomePage() {
     </div>
   );
 }
+

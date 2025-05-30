@@ -1,15 +1,19 @@
 "use server";
 
-import { getServerSession } from "next-auth";
-import { Button } from "./ui/button";
-import { Separator } from "./ui/separator";
-import { authOptions } from "~/server/auth";
 import AWS from "aws-sdk";
 import { env } from "~/env";
 import DownloadRecentThumbnail from "./download-recent-thumbnail";
+import { Button } from "./ui/button";
+import { Separator } from "./ui/separator";
 
-const Recent = async () => {
-  const serverSession = await getServerSession(authOptions);
+type RecentProps = {
+  userId: string;
+};
+
+const Recent = async ({ userId }: RecentProps) => {
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
 
   const s3 = new AWS.S3({
     accessKeyId: env.MY_AWS_ACCESS_KEY,
@@ -17,7 +21,7 @@ const Recent = async () => {
     region: env.MY_AWS_REGION,
   });
 
-  const prefix = `${serverSession?.user.id}/`;
+  const prefix = `${userId}/`;
 
   const params = {
     Bucket: env.MY_AWS_BUCKET_NAME,
@@ -27,14 +31,16 @@ const Recent = async () => {
 
   const data = await s3.listObjectsV2(params).promise();
 
-  const recentThumbnails = data.Contents?.sort((a, b) => {
-    const dateA = new Date(a.LastModified ?? 0).getTime();
-    const dateB = new Date(b.LastModified ?? 0).getTime();
-    return dateB - dateA;
-  }).map((item) => ({
-    url: `https://${env.MY_AWS_BUCKET_NAME}.s3.${env.MY_AWS_REGION}.amazonaws.com/${item.Key}`,
-    createdAt: item.LastModified ?? new Date(),
-  }));
+  const recentThumbnails = data.Contents
+    ?.sort((a, b) => {
+      const dateA = a.LastModified?.getTime() ?? 0;
+      const dateB = b.LastModified?.getTime() ?? 0;
+      return dateB - dateA;
+    })
+    .map((item) => ({
+      url: `https://${env.MY_AWS_BUCKET_NAME}.s3.${env.MY_AWS_REGION}.amazonaws.com/${item.Key}`,
+      createdAt: item.LastModified ?? new Date(0),
+    }));
 
   return (
     <div className="flex flex-col">
@@ -49,7 +55,7 @@ const Recent = async () => {
         <p className="text-sm text-muted-foreground">No recent thumbnails.</p>
       ) : (
         <div className="flex h-fit max-w-full gap-2 overflow-x-scroll">
-          {recentThumbnails?.map((thumbnail) => (
+          {recentThumbnails.map((thumbnail) => (
             <div key={thumbnail.url} className="flex min-w-fit flex-col gap-1">
               <img
                 src={thumbnail.url}
@@ -74,3 +80,4 @@ const Recent = async () => {
 };
 
 export default Recent;
+

@@ -1,9 +1,11 @@
 "use client";
 
-import { signOut } from "next-auth/react";
+import { useClerk } from "@clerk/nextjs";
 import { PiSignOutLight } from "react-icons/pi";
 
 const Signout = () => {
+  const { signOut } = useClerk();
+
   return (
     <PiSignOutLight
       onClick={() => signOut()}
@@ -13,3 +15,4 @@ const Signout = () => {
 };
 
 export default Signout;
+

@@ -1,9 +1,8 @@
-"use client";
+"use client"
 
-import { useForm } from "react-hook-form";
-import Link from "next/link";
-import { useState } from "react";
-import { IoMdArrowBack } from "react-icons/io";
+import { useForm } from "react-hook-form"
+import Link from "next/link"
+import { IoMdArrowBack } from "react-icons/io"
 import {
   Card,
   CardContent,
@@ -11,46 +10,63 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "./card";
-import { Label } from "./label";
-import { Input } from "./input";
-import { Button } from "./button";
-import { z } from "zod";
-import { signInSchema } from "~/schemas/auth";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn } from "next-auth/react";
-import { toast } from "~/hooks/use-toast";
-import { useRouter } from "next/navigation";
+} from "./card"
+import { Label } from "./label"
+import { Input } from "./input"
+import { Button } from "./button"
+import { z } from "zod"
+import { signInSchema } from "~/schemas/auth"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { toast } from "~/hooks/use-toast"
+import { useRouter } from "next/navigation"
 
-type FormValues = z.infer<typeof signInSchema>;
+type FormValues = z.infer<typeof signInSchema>
 
 const Signin = () => {
-  const router = useRouter();
+  const router = useRouter()
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormValues>({ resolver: zodResolver(signInSchema) });
+  } = useForm<FormValues>({ resolver: zodResolver(signInSchema) })
 
   const onSubmit = async (data: FormValues) => {
-    const response = await signIn("credentials", {
-      email: data.email,
-      password: data.password,
-      callbackUrl: "/dashboard",
-      redirect: false,
-    });
+    try {
+      const res = await fetch("/api/signin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: data.email, password: data.password }),
+      })
 
-    if (response?.error) {
+      const json = await res.json()
+
+      if (!res.ok) {
+        toast({
+          title: "Sign in failed",
+          description: json.error || "Unknown error",
+          variant: "destructive",
+        })
+        return
+      }
+
+      // Save JWT token (example using localStorage)
+      localStorage.setItem("token", json.token)
+
       toast({
-        title: "Wrong user/password",
-        description: "Could not sign in",
+        title: "Signed in",
+        description: "Welcome back!",
+      })
+
+      router.push("/dashboard")
+    } catch {
+      toast({
+        title: "Sign in failed",
+        description: "Network error",
         variant: "destructive",
-      });
-    } else if (response?.ok) {
-      router.push("/dashboard");
+      })
     }
-  };
+  }
 
   return (
     <div className="flex h-screen items-center justify-center">
@@ -63,7 +79,7 @@ const Signin = () => {
           <CardHeader>
             <CardTitle className="text-2xl">Sign in</CardTitle>
             <CardDescription>
-              Enter your email and password below to sign up.
+              Enter your email and password below to sign in.
             </CardDescription>
           </CardHeader>
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -82,15 +98,9 @@ const Signin = () => {
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="password">Password</Label>
-                <Input
-                  {...register("password")}
-                  id="password"
-                  type="password"
-                />
+                <Input {...register("password")} id="password" type="password" />
                 {errors.password && (
-                  <p className="text-sm text-red-500">
-                    {errors.password.message}
-                  </p>
+                  <p className="text-sm text-red-500">{errors.password.message}</p>
                 )}
               </div>
             </CardContent>
@@ -106,7 +116,8 @@ const Signin = () => {
         </Card>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Signin;
+export default Signin
+

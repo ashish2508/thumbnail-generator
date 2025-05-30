@@ -1,24 +1,29 @@
 "use server";
 
-import { getServerSession } from "next-auth";
+import { getAuth } from "@clerk/nextjs/server";
 import Link from "next/link";
 import Recent from "~/components/recent";
-import Style from "~/components/style";
 import ThumbnailCreator from "~/components/thumbnail-creator";
 import { Button } from "~/components/ui/button";
-import { env } from "~/env";
-import { authOptions } from "~/server/auth";
 import { db } from "~/server/db";
 
 const Page = async () => {
-  const serverSession = await getServerSession(authOptions);
+  const { userId } = getAuth();
+
+  if (!userId) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <p>Please sign in to access this page.</p>
+        <Link href="/signin">
+          <Button>Sign In</Button>
+        </Link>
+      </div>
+    );
+  }
+
   const user = await db.user.findUnique({
-    where: {
-      id: serverSession?.user.id,
-    },
-    select: {
-      credits: true,
-    },
+    where: { id: userId },
+    select: { credits: true },
   });
 
   return (
@@ -55,3 +60,4 @@ const Page = async () => {
 };
 
 export default Page;
+

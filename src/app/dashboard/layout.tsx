@@ -2,31 +2,29 @@
 
 import "~/styles/globals.css";
 
-import { getServerSession } from "next-auth";
+import { getAuth } from "@clerk/nextjs/server";
 import Link from "next/link";
 import Signout from "~/components/signout";
 import { Button } from "~/components/ui/button";
-import { authOptions } from "~/server/auth";
 import { db } from "~/server/db";
 
 export default async function Layout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const serverSession = await getServerSession(authOptions);
-  const user = await db.user.findUnique({
-    where: {
-      id: serverSession?.user.id,
-    },
-    select: {
-      credits: true,
-    },
-  });
+  const { userId } = getAuth();
+
+  const user = userId
+    ? await db.user.findUnique({
+        where: { id: userId },
+        select: { credits: true },
+      })
+    : null;
 
   return (
     <div className="flex h-screen w-full flex-col items-center overflow-y-scroll px-6 py-6">
       <nav className="flex w-full items-center justify-end pb-6">
         <div className="flex items-center gap-4">
-          <p>{user?.credits} credits left</p>
+          <p>{user?.credits ?? 0} credits left</p>
           <Link href="/dashboard/pricing">
             <Button>Buy more</Button>
           </Link>
@@ -37,3 +35,4 @@ export default async function Layout({
     </div>
   );
 }
+

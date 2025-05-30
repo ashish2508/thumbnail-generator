@@ -1,15 +1,17 @@
 "use server";
 
-import { getServerSession } from "next-auth";
 import { revalidatePath } from "next/cache";
-import { authOptions } from "~/server/auth";
 import { db } from "~/server/db";
+import { getAuth } from "@clerk/nextjs/server";
 
 export const generate = async () => {
-  const serverSession = await getServerSession(authOptions);
+  const { userId } = getAuth();
+
+  if (!userId) throw new Error("Not authenticated");
+
   await db.user.update({
     where: {
-      id: serverSession?.user.id,
+      id: userId,
     },
     data: {
       credits: {
@@ -20,5 +22,6 @@ export const generate = async () => {
 };
 
 export const refresh = async () => {
-    revalidatePath("/dashboard");
-}
+  revalidatePath("/dashboard");
+};
+

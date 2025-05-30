@@ -1,22 +1,18 @@
 "use server";
 
-import { getServerSession } from "next-auth";
+import { getAuth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import Signup from "~/components/ui/signup";
-import { authOptions } from "~/server/auth";
 
 const Page = async () => {
-  const serverSession = await getServerSession(authOptions);
+  const { userId } = getAuth();
 
-  if (serverSession?.user) {
+  if (userId) {
     redirect("/dashboard");
   }
 
-  return (
-    <>
-      <Signup />
-    </>
-  );
+  return <Signup />;
 };
 
 export default Page;
+

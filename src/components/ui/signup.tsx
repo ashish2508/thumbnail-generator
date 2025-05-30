@@ -2,7 +2,6 @@
 
 import { useForm } from "react-hook-form";
 import Link from "next/link";
-import { useState } from "react";
 import { IoMdArrowBack } from "react-icons/io";
 import {
   Card,
@@ -18,7 +17,6 @@ import { Button } from "./button";
 import { z } from "zod";
 import { signInSchema } from "~/schemas/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn } from "next-auth/react";
 import { toast } from "~/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { signup } from "~/app/actions/auth";
@@ -31,7 +29,7 @@ const Signup = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<FormValues>({ resolver: zodResolver(signInSchema) });
 
   const onSubmit = async (data: FormValues) => {
@@ -48,6 +46,7 @@ const Signup = () => {
         title: "Sign up successful",
         description: "You can now sign in with your new account.",
       });
+      router.push("/signin");
     }
   };
 
@@ -81,20 +80,14 @@ const Signup = () => {
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="password">Password</Label>
-                <Input
-                  {...register("password")}
-                  id="password"
-                  type="password"
-                />
+                <Input {...register("password")} id="password" type="password" />
                 {errors.password && (
-                  <p className="text-sm text-red-500">
-                    {errors.password.message}
-                  </p>
+                  <p className="text-sm text-red-500">{errors.password.message}</p>
                 )}
               </div>
             </CardContent>
             <CardFooter className="flex flex-col gap-2">
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
                 Sign up
               </Button>
               <Link href="/signin">
@@ -109,3 +102,4 @@ const Signup = () => {
 };
 
 export default Signup;
+
