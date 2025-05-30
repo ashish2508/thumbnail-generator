@@ -31,4 +31,5 @@ npm run dev
 Open your browser and visit:
 [http://localhost:3000](http://localhost:3000)
 
-[WEBSITE](https://ai-thumbnail-gena8.vercel.app/)
+[WEBSITE-vercel](https://ai-thumbnail-gena8.vercel.app/)
+[WEBSITE-netlify](https://thumbnail-generatr.netlify.app/)
